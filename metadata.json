@@ -1,0 +1,8 @@
+{
+  "name": "mis catalog",
+  "description": "A professional web tool to build product catalogs, live preview in A4 layout, and export to PDF and Word.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
