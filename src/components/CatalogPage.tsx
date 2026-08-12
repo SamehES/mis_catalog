@@ -10,9 +10,16 @@ interface CatalogPageProps {
   pageIndex: number;
   settings: CatalogSettings;
   idOverride?: string;
+  exportMode?: boolean;
 }
 
-export const CatalogPage: React.FC<CatalogPageProps> = ({ page, pageIndex, settings, idOverride }) => {
+export const CatalogPage: React.FC<CatalogPageProps> = ({
+  page,
+  pageIndex,
+  settings,
+  idOverride,
+  exportMode = false,
+}) => {
   const { orientation, productsPerRow, theme, title, subtitle, footerText } = settings;
   const isLandscape = orientation === 'landscape';
 
@@ -63,7 +70,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ page, pageIndex, setti
       <div
         id={idOverride || `catalog-page-${pageIndex}`}
         style={pageDimensionStyle}
-        className={`relative ${themeStyles.bg} border ${themeStyles.border} shadow-2xl p-16 flex flex-col items-center justify-between mx-auto my-6 overflow-hidden select-none`}
+        className={`relative ${themeStyles.bg} border ${themeStyles.border} p-16 flex flex-col items-center justify-between overflow-hidden select-none ${
+          exportMode ? '' : 'shadow-2xl mx-auto my-6'
+        }`}
       >
         <div className="w-full flex justify-between items-center text-xs font-semibold uppercase tracking-widest opacity-60">
           <span>{new Date().toLocaleDateString()}</span>
@@ -98,7 +107,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ page, pageIndex, setti
     <div
       id={idOverride || `catalog-page-${pageIndex}`}
       style={pageDimensionStyle}
-      className={`relative ${themeStyles.bg} border ${themeStyles.border} shadow-2xl p-8 flex flex-col justify-between mx-auto my-6 overflow-hidden select-none`}
+      className={`relative ${themeStyles.bg} border ${themeStyles.border} p-8 flex flex-col justify-between overflow-hidden select-none ${
+        exportMode ? '' : 'shadow-2xl mx-auto my-6'
+      }`}
     >
       {/* Catalog Header */}
       <div className={`w-full ${themeStyles.headerBg} rounded-2xl px-6 py-4 shadow-sm flex items-center justify-between mb-6`}>
