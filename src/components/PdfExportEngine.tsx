@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { jsPDF } from 'jspdf';
 import html2canvasPro from 'html2canvas-pro';
+import { toPng } from 'html-to-image';
 import { Loader2, FileCheck } from 'lucide-react';
 import { PageData } from '../utils/catalogPagination';
 import { CatalogSettings } from '../types';
@@ -105,26 +106,48 @@ export const PdfExportEngine: React.FC<PdfExportEngineProps> = ({
       try {
         const widthPx = isLandscape ? 1123 : 794;
         const heightPx = isLandscape ? 794 : 1123;
+        let imgData: string;
 
-        const canvas = await html2canvasPro(targetEl, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          x: 0,
-          y: 0,
-          scrollX: 0,
-          scrollY: 0,
-          width: widthPx,
-          height: heightPx,
-          windowWidth: widthPx,
-          windowHeight: heightPx,
-        });
+        try {
+          imgData = await toPng(targetEl, {
+            pixelRatio: 2,
+            cacheBust: true,
+            backgroundColor: '#ffffff',
+            canvasWidth: widthPx,
+            canvasHeight: heightPx,
+            skipAutoScale: true,
+            style: {
+              margin: '0',
+              transform: 'none',
+            },
+          });
+        } catch (toPngError) {
+          console.warn(
+            `html-to-image failed on page ${exportIndex + 1}, falling back to html2canvas-pro:`,
+            toPngError
+          );
+
+          const canvas = await html2canvasPro(targetEl, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            x: 0,
+            y: 0,
+            scrollX: 0,
+            scrollY: 0,
+            width: widthPx,
+            height: heightPx,
+            windowWidth: widthPx,
+            windowHeight: heightPx,
+          });
+
+          imgData = canvas.toDataURL('image/png');
+        }
 
         if (isCancelled) return;
 
-        const imgData = canvas.toDataURL('image/png');
         const pdf = pdfRef.current;
         const pdfWidth = isLandscape ? 297 : 210;
         const pdfHeight = isLandscape ? 210 : 297;
